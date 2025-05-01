@@ -15,24 +15,60 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
-let app: FirebaseApp;
-let auth: ReturnType<typeof getAuth>;
-let db: ReturnType<typeof getFirestore>;
+// Function to check if all required config values are present
+const isFirebaseConfigValid = (config: typeof firebaseConfig): boolean => {
+    return !!(config.apiKey && config.authDomain && config.projectId && config.storageBucket && config.messagingSenderId && config.appId);
+};
 
-if (!getApps().length) {
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
-} else {
-  app = getApp();
-  auth = getAuth(app); // Ensure auth is initialized even if app exists
-  db = getFirestore(app); // Ensure db is initialized even if app exists
+// Initialize Firebase
+let app: FirebaseApp | null = null; // Allow app to be null initially
+let auth: ReturnType<typeof getAuth> | null = null;
+let db: ReturnType<typeof getFirestore> | null = null;
+let firebaseInitializationError: Error | null = null;
+
+try {
+  if (!getApps().length) {
+    if (isFirebaseConfigValid(firebaseConfig)) {
+      app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+    } else {
+      console.warn(
+        "Firebase configuration is incomplete. Please check your .env file and ensure all NEXT_PUBLIC_FIREBASE_ variables are set correctly."
+      );
+      throw new Error("Firebase configuration is incomplete.");
+    }
+  } else {
+    app = getApp();
+    // Check validity again in case of HMR or similar scenarios where env vars might change
+    if (isFirebaseConfigValid(firebaseConfig)) {
+        auth = getAuth(app); // Ensure auth is initialized even if app exists
+        db = getFirestore(app); // Ensure db is initialized even if app exists
+    } else {
+         console.warn(
+            "Firebase configuration became invalid after initial load. Please check your .env file."
+         );
+         throw new Error("Firebase configuration is invalid.");
+    }
+  }
+} catch (error) {
+    console.error("Firebase initialization failed:", error);
+    firebaseInitializationError = error instanceof Error ? error : new Error('Unknown Firebase initialization error');
+    // Set app, auth, db to null if initialization fails
+    app = null;
+    auth = null;
+    db = null;
 }
+
 
 // Function to ensure user is signed in anonymously
 const ensureAnonymousUser = (): Promise<User> => {
   return new Promise((resolve, reject) => {
+    // Check if Firebase initialized correctly
+    if (!auth || firebaseInitializationError) {
+        return reject(firebaseInitializationError || new Error("Firebase Auth is not initialized."));
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       unsubscribe(); // Unsubscribe after first check
       if (user) {
@@ -44,7 +80,12 @@ const ensureAnonymousUser = (): Promise<User> => {
           })
           .catch((error) => {
             console.error("Anonymous sign-in failed:", error);
-            reject(error);
+            // Provide a more specific error message if possible
+            if (error.code === 'auth/invalid-api-key') {
+                reject(new Error("Firebase sign-in failed: Invalid API Key. Please check your Firebase configuration in .env."));
+            } else {
+                reject(error);
+            }
           });
       }
     }, (error) => {
@@ -55,10 +96,12 @@ const ensureAnonymousUser = (): Promise<User> => {
 };
 
 
+// Export potentially null values, components should handle this
 export {
     app,
-    db,
-    auth,
+    db, // db can be null if initialization failed
+    auth, // auth can be null if initialization failed
+    firebaseInitializationError, // Export the error state
     ensureAnonymousUser,
     collection,
     doc,
