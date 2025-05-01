@@ -3,17 +3,10 @@
 import React, { useState, useCallback } from 'react';
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Upload, Sparkles } from 'lucide-react';
+import { Upload } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import { suggestTagsDescriptions } from '@/ai/flows/suggest-tags-descriptions';
-import type { SuggestTagsDescriptionsOutput } from '@/ai/flows/suggest-tags-descriptions';
 
-interface FileEditorProps {
-  setAiSuggestions: (suggestions: SuggestTagsDescriptionsOutput | null) => void;
-  setIsLoadingAi: (loading: boolean) => void;
-}
-
-export function FileEditor({ setAiSuggestions, setIsLoadingAi }: FileEditorProps) {
+export function FileEditor() {
   const [fileContent, setFileContent] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
   const { toast } = useToast();
@@ -31,8 +24,6 @@ export function FileEditor({ setAiSuggestions, setIsLoadingAi }: FileEditorProps
           title: "File Uploaded",
           description: `${file.name} loaded successfully.`,
         });
-        // Optionally trigger AI suggestions automatically after upload
-        // handleSuggestTags();
       };
       reader.onerror = () => {
         toast({
@@ -49,41 +40,8 @@ export function FileEditor({ setAiSuggestions, setIsLoadingAi }: FileEditorProps
     }
   };
 
-  const handleSuggestTags = useCallback(async () => {
-    if (!fileContent || !fileName) {
-      toast({
-        title: "Cannot Suggest",
-        description: "Please upload a file or add content first.",
-        variant: "destructive",
-      });
-      return;
-    }
-    setIsLoadingAi(true);
-    setAiSuggestions(null); // Clear previous suggestions
-    try {
-      const result = await suggestTagsDescriptions({ fileContent, fileName });
-      setAiSuggestions(result);
-      toast({
-        title: "AI Suggestions Ready",
-        description: "Tags and description generated.",
-      });
-    } catch (error) {
-      console.error("AI Suggestion Error:", error);
-      toast({
-        title: "AI Error",
-        description: "Failed to generate suggestions.",
-        variant: "destructive",
-      });
-       setAiSuggestions(null);
-    } finally {
-      setIsLoadingAi(false);
-    }
-  }, [fileContent, fileName, setAiSuggestions, setIsLoadingAi, toast]);
-
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setFileContent(event.target.value);
-     // Consider if AI suggestions should be cleared or updated on manual text change
-     // setAiSuggestions(null);
      if (!fileName && event.target.value) {
          setFileName('untitled.txt'); // Set a default filename if text is entered manually
      } else if (!event.target.value) {
@@ -110,9 +68,7 @@ export function FileEditor({ setAiSuggestions, setIsLoadingAi }: FileEditorProps
          <Button variant="outline" size="sm" onClick={triggerFileInput}>
            <Upload className="mr-2 h-4 w-4" /> Upload File
          </Button>
-          <Button variant="outline" size="sm" onClick={handleSuggestTags} disabled={!fileContent || !fileName}>
-           <Sparkles className="mr-2 h-4 w-4" /> Suggest Tags/Desc
-         </Button>
+         {/* Removed Suggest Tags/Desc Button */}
         </div>
       </div>
 
