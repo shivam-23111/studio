@@ -16,8 +16,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark"> {/* Set dark theme as default */}
-      {/* Apply font variables to the body */}
+    // Set dark theme as default
+    <html lang="en" className="dark">
+       {/* Apply font variables to the body */}
       <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans antialiased`}>
         <SessionProvider> {/* Wrap children with SessionProvider */}
           {children}

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useSession } from '@/contexts/session-context';
 import { db, doc, onSnapshot, collection, addDoc, serverTimestamp, query, orderBy } from '@/lib/firebase';
+import { useToast } from "@/hooks/use-toast"; // Import useToast
 
 interface Participant {
     id: string; // Use userId as the unique ID
@@ -44,6 +45,7 @@ export function CollaborationSidebar() {
   const [isLoadingParticipants, setIsLoadingParticipants] = useState(true);
   const [isLoadingChat, setIsLoadingChat] = useState(true);
   const chatScrollAreaRef = useRef<HTMLDivElement>(null); // Ref for chat scroll viewport
+  const { toast } = useToast(); // Initialize useToast
 
   const scrollToBottom = () => {
     if (chatScrollAreaRef.current) {
@@ -85,7 +87,7 @@ export function CollaborationSidebar() {
     });
 
     return () => unsubscribe();
-  }, [sessionId, isLoadingAuth]); // Rerun when session changes
+  }, [sessionId, isLoadingAuth, toast]); // Add toast to dependencies
 
 
   // Effect to listen for chat messages
@@ -124,7 +126,7 @@ export function CollaborationSidebar() {
     });
 
     return () => unsubscribe();
-  }, [sessionId, isLoadingAuth]); // Rerun when session changes
+  }, [sessionId, isLoadingAuth, toast]); // Add toast to dependencies
 
    const handleSendMessage = async (e?: React.FormEvent<HTMLFormElement>) => {
         e?.preventDefault(); // Prevent form submission page reload
@@ -151,8 +153,6 @@ export function CollaborationSidebar() {
         }
    };
 
-   // Import useToast if needed
-   const { toast } = useToast();
 
   return (
     <TooltipProvider delayDuration={100}>
@@ -260,3 +260,4 @@ export function CollaborationSidebar() {
     </TooltipProvider>
   );
 }
+
