@@ -1,45 +1,46 @@
-# CollabEdit
+# CollabEdit - Prototype
 
-This is a Next.js application for collaborative file and code sharing, built within Firebase Studio.
+This is a **Next.js application prototype** for collaborative file and code sharing, built within Firebase Studio.
 
-## Getting Started
+**Current Status:** This is a functional **prototype**. It demonstrates the user interface and local file handling.
+*   **Collaboration Features (Chat, Participants, Session Sharing):** Currently **simulated** with dummy data. Real-time collaboration requires setting up and integrating a Firebase backend (Firestore).
+*   **File Sharing:** Files uploaded or edited are currently handled **locally** within your browser session and are **not shared** with others.
 
-Follow these steps to download the code, set it up locally, and deploy it for free personal use.
+## Getting Started (Running the Prototype Locally)
+
+Follow these steps to download the code and run the prototype locally.
 
 **1. Download the Code:**
 
-*   You will need the code files generated during our conversation. Ensure you have saved all the necessary files with their correct names and directory structure (e.g., `src/app/page.tsx`, `components/header.tsx`, etc.). Place them in a new project folder on your local machine.
+*   Ensure you have all the necessary code files generated during our conversation, maintaining the correct directory structure (e.g., `src/app/page.tsx`, `components/header.tsx`, etc.). Place them in a new project folder on your local machine.
 
 **2. Prerequisites:**
 
-*   **Node.js:** Make sure you have Node.js installed (which includes npm). You can download it from [nodejs.org](https://nodejs.org/). Version 18 or later is recommended.
-*   **(Optional) Yarn:** You can use `npm` or `yarn` as your package manager. If you prefer Yarn, install it globally: `npm install --global yarn`.
+*   **Node.js:** Make sure you have Node.js installed (which includes npm). Download it from [nodejs.org](https://nodejs.org/). Version 18 or later is recommended.
+*   **(Optional) Yarn:** Use `npm` or `yarn`. If you prefer Yarn, install it: `npm install --global yarn`.
 
 **3. Install Dependencies:**
 
 *   Open your terminal or command prompt.
-*   Navigate to the project folder where you saved the code files.
-*   Run the installation command:
+*   Navigate to the project folder.
+*   Run:
     ```bash
     npm install
-    # OR if using yarn
+    # OR
     # yarn install
     ```
-    This will download all the necessary libraries defined in `package.json`.
 
-**4. Set up Firebase (Required for Collaboration Features):**
+**4. (Optional - For Future Backend Integration) Set up Firebase:**
 
-*   **Create a Firebase Project:** Go to the [Firebase Console](https://console.firebase.google.com/) and create a new project. The free "Spark" plan is sufficient for personal use.
-*   **Enable Firestore:** In your Firebase project console, go to the "Firestore Database" section and create a database. Start in "test mode" for easy setup (remember to configure security rules properly before sharing).
+*   _This step is **not required** to run the current prototype, but you'll need it to enable real collaboration features later._
+*   **Create a Firebase Project:** Go to [Firebase Console](https://console.firebase.google.com/) and create a new project (free "Spark" plan is sufficient).
+*   **Enable Firestore:** Go to "Firestore Database" and create a database. Start in "test mode" initially (remember to secure rules later).
 *   **Get Firebase Config:**
-    *   In your Firebase project console, go to Project Settings (gear icon).
-    *   Scroll down to the "Your apps" section.
-    *   Click the Web icon (`</>`) to register a new web app.
-    *   Give it a nickname (e.g., "CollabEdit Web").
-    *   Firebase will provide you with a configuration object ( `firebaseConfig`). Copy this object.
+    *   Project Settings (gear icon) > Your apps > Web (`</>`).
+    *   Register a web app and copy the `firebaseConfig` object.
 *   **Add Config to Environment Variables:**
-    *   Create a file named `.env.local` in the root of your project folder (where `package.json` is).
-    *   Paste the configuration values into this file, prefixing each key with `NEXT_PUBLIC_FIREBASE_`:
+    *   Create `.env.local` in your project root.
+    *   Paste the config, prefixing keys with `NEXT_PUBLIC_FIREBASE_`:
         ```.env.local
         NEXT_PUBLIC_FIREBASE_API_KEY=YOUR_API_KEY
         NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=YOUR_AUTH_DOMAIN
@@ -49,10 +50,10 @@ Follow these steps to download the code, set it up locally, and deploy it for fr
         NEXT_PUBLIC_FIREBASE_APP_ID=YOUR_APP_ID
         # NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=YOUR_MEASUREMENT_ID (Optional)
         ```
-    *   Replace `YOUR_...` with the actual values from your `firebaseConfig`.
-    *   _Note: Using `NEXT_PUBLIC_` makes these variables accessible in the browser. Be mindful not to expose sensitive keys if you add server-side secrets later._
+    *   Replace `YOUR_...` with your actual values.
+    *   _Note:_ `NEXT_PUBLIC_` makes variables browser-accessible.
 
-**5. Run Locally:**
+**5. Run the Prototype Locally:**
 
 *   Start the development server:
     ```bash
@@ -60,38 +61,52 @@ Follow these steps to download the code, set it up locally, and deploy it for fr
     # OR
     # yarn dev
     ```
-*   Open your web browser and navigate to `http://localhost:9002` (or the port specified in the terminal).
+*   Open your browser and go to `http://localhost:9002` (or the specified port).
+*   You can interact with the UI, upload local files (they won't be shared), and see the simulated chat/participants.
 
-**6. Build for Production:**
+**6. Build for Production (Optional):**
 
-*   When you're ready to deploy, create a production-optimized build:
+*   To create an optimized build (still without backend features unless integrated):
     ```bash
     npm run build
     # OR
     # yarn build
     ```
-    This creates an optimized version of your app in the `.next` folder.
 
-**7. Deploy for Free (Personal Use):**
+**7. Deploying the Prototype (Optional):**
 
-Here are two popular free options:
+You can deploy this prototype version for free to show the UI. Remember, collaboration features **will not work** without the backend.
 
-*   **Option A: Vercel (Recommended for Next.js)**
-    *   **Sign up:** Create an account at [vercel.com](https://vercel.com/) (free tier available).
-    *   **Push to Git:** Push your project code to a Git repository (GitHub, GitLab, Bitbucket).
-    *   **Import Project:** In your Vercel dashboard, import the Git repository.
-    *   **Configure:** Vercel usually detects Next.js projects automatically. You'll need to add your Firebase environment variables (from `.env.local`) in the Vercel project settings (Settings -> Environment Variables). Do **not** commit your `.env.local` file to Git.
-    *   **Deploy:** Vercel will build and deploy your application.
+*   **Vercel (Recommended):**
+    *   Push code to Git (GitHub, GitLab, etc.).
+    *   Sign up at [vercel.com](https://vercel.com/).
+    *   Import your Git repository. Vercel usually detects Next.js automatically.
+    *   (Optional for backend) Add Firebase environment variables in Vercel project settings (Settings -> Environment Variables). **Do not commit `.env.local` to Git.**
+    *   Deploy.
 
-*   **Option B: Firebase Hosting**
-    *   **Install Firebase CLI:** If you don't have it, install it globally: `npm install -g firebase-tools`
-    *   **Login:** Login to Firebase: `firebase login`
-    *   **Initialize:** In your project root, initialize Firebase: `firebase init hosting`
-        *   Select "Use an existing project" and choose the Firebase project you created.
-        *   Use `.next` as your public directory (Vercel handles this better, Firebase needs specific configuration for Next.js features like SSR/ISR, often requiring Cloud Functions. Vercel is generally simpler for Next.js). For a purely static export, you might configure `next.config.js` for static output, but CollabEdit likely requires server features. *Using Firebase Hosting might be more complex for a full-stack Next.js app compared to Vercel.*
-        *   Configure as a single-page app (rewrite all urls to /index.html): Choose **No** for a standard Next.js app unless you are doing a static export.
-        *   Set up automatic builds and deploys with GitHub: Optionally choose **Yes** if using GitHub Actions.
-    *   **Build:** Run `npm run build` (or `yarn build`).
-    *   **Deploy:** Deploy your site: `firebase deploy --only hosting`
+*   **Firebase Hosting:**
+    *   Requires more setup for Next.js features. Vercel is generally simpler for Next.js apps.
+    *   Install Firebase CLI: `npm install -g firebase-tools`
+    *   Login: `firebase login`
+    *   Initialize: `firebase init hosting` (choose your project, use `.next` as public directory, say No to single-page app rewrite unless doing static export).
+    *   Build: `npm run build`
+    *   Deploy: `firebase deploy --only hosting`
 
-Now you have your CollabEdit application running either locally or deployed! Remember to configure Firebase security rules for Firestore to protect your data if others will use your deployed version.
+## Next Steps (Enabling Collaboration)
+
+To make CollabEdit fully functional:
+
+1.  **Implement Firebase Backend:**
+    *   Set up Firestore database structure for sessions, files, chat messages, and participants.
+    *   Write backend logic (potentially using Firebase Functions or integrated within Next.js API routes/Server Actions) to:
+        *   Create and manage unique collaboration sessions.
+        *   Handle real-time updates for file content using Firestore listeners.
+        *   Store and retrieve chat messages.
+        *   Manage participant lists (joining/leaving).
+        *   Implement user authentication (Firebase Auth) if needed.
+2.  **Connect Frontend to Backend:**
+    *   Replace placeholder logic in `src/components/session-manager.tsx` and `src/components/collaboration-sidebar.tsx` with actual Firebase calls (e.g., using `firebase/firestore` SDK).
+    *   Modify `src/components/file-editor.tsx` to read/write file content to/from Firestore in real-time.
+3.  **Configure Firestore Security Rules:** Ensure only authorized users can access and modify data in the correct sessions.
+
+This prototype provides the foundation UI. The next major step is the backend integration for real-time collaboration.

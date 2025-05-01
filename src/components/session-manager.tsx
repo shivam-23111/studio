@@ -32,8 +32,9 @@ export function SessionManager() {
     setSessionCode(code);
     setIsSessionActive(true);
      toast({
-        title: "Session Created (Local)",
-        description: `Session code: ${code}. Collaboration features require backend implementation.`,
+        title: "Session Created (Local Prototype)",
+        description: `Session code: ${code}. This is a local simulation. Real collaboration requires backend setup.`,
+        duration: 5000, // Keep message longer
       });
     // Example Firestore interaction (replace with actual logic):
     // try {
@@ -53,7 +54,7 @@ export function SessionManager() {
     navigator.clipboard.writeText(sessionCode);
     toast({
         title: "Copied!",
-        description: "Session code copied to clipboard.",
+        description: "Local session code copied to clipboard.",
       });
   };
 
@@ -85,10 +86,13 @@ export function SessionManager() {
         setIsSessionActive(true);
         setSessionCode(codeToJoin);
         toast({
-            title: "Joined Session (Local)",
-            description: `Connected to session ${codeToJoin}. Collaboration features require backend implementation.`,
+            title: "Joined Session (Local Prototype)",
+            description: `Locally connected using code ${codeToJoin}. Real collaboration requires backend setup.`,
+            duration: 5000, // Keep message longer
         });
-        // Ideally close the dialog on successful join. Requires managing dialog open state.
+        setJoinCode(''); // Clear input after attempting join
+        // Ideally close the dialog on successful join. Requires managing dialog open state externally.
+        // For now, user closes manually.
     } else {
          toast({
             title: "Error",
@@ -105,8 +109,8 @@ export function SessionManager() {
     setIsSessionActive(false);
     setSessionCode('');
      toast({
-        title: "Left Session",
-        description: "Disconnected from the session.",
+        title: "Left Session (Local)",
+        description: "Disconnected from the local session simulation.",
       });
   };
 
@@ -115,7 +119,7 @@ export function SessionManager() {
     <div className="flex items-center space-x-2">
       {isSessionActive ? (
          <>
-           <span className="text-sm font-medium text-muted-foreground hidden sm:inline">Session: {sessionCode}</span>
+           <span className="text-sm font-medium text-muted-foreground hidden sm:inline">Local Session: {sessionCode}</span>
             <Button variant="outline" size="sm" onClick={copyToClipboard}>
                 <Copy className="h-4 w-4 sm:mr-2"/> <span className="hidden sm:inline">Copy Code</span>
             </Button>
@@ -130,14 +134,14 @@ export function SessionManager() {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Create New Session</DialogTitle>
+                <DialogTitle>Create New Session (Prototype)</DialogTitle>
                 <DialogDescription>
-                  Generate a unique code to share with collaborators. Collaboration requires backend setup.
+                  Generate a local simulation code. Sharing and real-time features require backend setup (Firebase).
                 </DialogDescription>
               </DialogHeader>
               {sessionCode && isSessionActive ? ( // Check isSessionActive too
                  <div className="space-y-4 py-4">
-                    <p className="text-sm text-muted-foreground">Share this code:</p>
+                    <p className="text-sm text-muted-foreground">Share this simulated code:</p>
                     <div className="flex items-center space-x-2">
                      <Input value={sessionCode} readOnly className="font-mono text-lg tracking-widest" />
                      <Button variant="outline" size="icon" onClick={copyToClipboard}>
@@ -165,15 +169,15 @@ export function SessionManager() {
           </Dialog>
 
           {/* Join Session Dialog */}
-          <Dialog>
+           <Dialog>
             <DialogTrigger asChild>
               <Button size="sm"><Users className="h-4 w-4 mr-2" /> Join Session</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Join Session</DialogTitle>
+                <DialogTitle>Join Session (Prototype)</DialogTitle>
                 <DialogDescription>
-                  Enter the session code provided by the host. Collaboration requires backend setup.
+                  Enter a simulated session code. Real-time joining requires backend setup (Firebase).
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
@@ -185,17 +189,17 @@ export function SessionManager() {
                     id="session-code"
                     placeholder="Enter code..."
                     value={joinCode}
-                    onChange={(e) => setJoinCode(e.target.value)}
+                    onChange={(e) => setJoinCode(e.target.value.toUpperCase())} // Force uppercase
                     className="col-span-3 uppercase font-mono tracking-widest"
-                    maxLength={6} // Assuming 6-char codes
+                    maxLength={8} // Allow slightly longer codes if needed
                   />
                 </div>
               </div>
               <DialogFooter>
+                {/* Use DialogClose within the Join button logic if state management is added */}
                 <DialogClose asChild>
-                     <Button type="button" variant="outline">Cancel</Button>
+                    <Button type="button" variant="outline">Cancel</Button>
                 </DialogClose>
-                 {/* Keep dialog open on Join click until successful? Needs state management */}
                  <Button type="button" onClick={handleJoinSession}>Join</Button>
               </DialogFooter>
             </DialogContent>
