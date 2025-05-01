@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -16,6 +17,7 @@ const ScrollArea = React.forwardRef<
     className={cn("relative overflow-hidden", className)}
     {...props}
   >
+    {/* Pass viewportRef to the Viewport component */}
     <ScrollAreaPrimitive.Viewport ref={viewportRef} className="h-full w-full rounded-[inherit]">
       {children}
     </ScrollAreaPrimitive.Viewport>
